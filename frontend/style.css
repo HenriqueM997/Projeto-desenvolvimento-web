@@ -121,3 +121,132 @@ form textarea {
 .tabela-container {
     margin-bottom: 30px;
 }
+#tabela-pacientes {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 20px 0;
+  font-size: 16px;
+}
+
+#tabela-pacientes th, 
+#tabela-pacientes td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd; /* Adiciona bordas visíveis */
+}
+
+#tabela-pacientes th {
+  background-color: #28a745;
+  color: white;
+  position: sticky;
+  top: 0;
+}
+
+#tabela-pacientes tbody tr:hover {
+  background-color: #f0f4f8;
+}
+
+.carregando, .sem-dados, .erro-carregamento {
+  padding: 20px;
+  text-align: center;
+  color: #666;
+  font-style: italic;
+}
+
+.gerenciar-consultas-container {
+  max-width: 1000px;
+  margin: 40px auto;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.gerenciar-consultas-container h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.consulta-filtro {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.consulta-filtro input,
+.consulta-filtro select,
+.consulta-filtro button {
+  padding: 10px 14px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.consulta-filtro button {
+  background-color: #4CAF50;
+  color: #fff;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.consulta-filtro button:hover {
+  background-color: #45a049;
+}
+
+.tabela-consultas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.tabela-consultas th,
+.tabela-consultas td {
+  border: 1px solid #ddd;
+  padding: 10px 12px;
+  text-align: left;
+}
+
+.tabela-consultas th {
+  background-color: #f4f4f4;
+  color: #333;
+}
+
+.tabela-consultas tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.tabela-consultas tr:hover {
+  background-color: #f1f1f1;
+}
+
+.botao-acao {
+  display: flex;
+  gap: 6px;
+}
+
+.botao-acao button {
+  padding: 6px 10px;
+  font-size: 13px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.botao-editar {
+  background-color: #2196F3;
+  color: #fff;
+}
+
+.botao-excluir {
+  background-color: #f44336;
+  color: #fff;
+}
+
+.botao-acao button:hover {
+  opacity: 0.85;
+}

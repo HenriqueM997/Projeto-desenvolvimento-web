@@ -14,6 +14,11 @@ const db = mysql.createConnection({
   database: 'psicologo_db'
 });
 
+app.get('/health', (req, res) => res.send('OK'));
+
+const port = process.env.PORT || 3001;
+app.listen(port, () => console.log(`Servidor rodando na porta ${port}`));
+
 db.connect(err => {
   if (err) {
     console.error('Erro ao conectar com o banco:', err);
@@ -356,4 +361,18 @@ app.delete('/consultas/:id', (req, res) => {
 
 app.listen(3001, () => {
   console.log('Servidor rodando em http://localhost:3001');
+});
+window.addEventListener('DOMContentLoaded', () => {
+  fetch('http://localhost:3001/pacientes') 
+    .then(res => res.json())
+    .then(pacientes => {
+      const select = document.getElementById('paciente_id');
+      pacientes.forEach(p => {
+        const option = document.createElement('option');
+        option.value = p.id;
+        option.textContent = p.nome;
+        select.appendChild(option);
+      });
+    })
+    .catch(err => console.error('Erro ao buscar pacientes:', err));
 });
