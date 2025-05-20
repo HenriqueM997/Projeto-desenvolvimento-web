@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="pt-br"> 
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Prontuários</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Prontuário do Paciente</h1>
+    <form id="formProntuario">
+      
+      <div class="form-group">
+        <label for="paciente_id">Nome do Paciente:</label>
+        <select id="paciente_id" name="paciente_id" required>
+          <option value="">Selecione um paciente</option>
+          <option value="1">João Silva</option>
+          <option value="2">Maria Souza</option>
+          <option value="3">Carlos Oliveira</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="diagnostico">Diagnóstico:</label>
+        <textarea id="diagnostico" name="diagnostico" required></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="anotacoes">Anotações:</label>
+        <textarea id="anotacoes" name="anotacoes" required></textarea>
+      </div>
+
+      <button type="submit">Salvar Prontuário</button>
+    </form>
+    
+    <div id="mensagem"></div>
+
+    <h2>Histórico de Prontuários</h2>
+    <ul id="lista-prontuarios"></ul>
+  </div>
+
+  <script>
+    document.getElementById('formProntuario').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const paciente_id = document.getElementById('paciente_id').value;
+      const diagnostico = document.getElementById('diagnostico').value;
+      const anotacoes = document.getElementById('anotacoes').value;
+
+      const resposta = await fetch('http://localhost:3001/prontuarios', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paciente_id, diagnostico, anotacoes })
+      });
+
+      const resultado = await resposta.json();
+      document.getElementById('mensagem').innerText = resultado.message || resultado.error;
+    });
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const paciente_id = urlParams.get('paciente_id');
+
+    if (paciente_id) {
+      fetch(`http://localhost:3001/prontuarios/${paciente_id}`)
+        .then(res => res.json())
+        .then(prontuarios => {
+          const lista = document.getElementById('lista-prontuarios');
+          prontuarios.forEach(p => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <strong>${p.data}</strong> - ${p.descricao}<br/>
+              Observações: ${p.observacoes}<br/>
+              <button onclick="deletar(${p.id})">Deletar</button>
+              <button onclick="editar(${p.id}, '${p.descricao}', '${p.observacoes}', '${p.data}')">Editar</button>
+            `;
+            lista.appendChild(li);
+          });
+        });
+    }
+
+    function deletar(id) {
+      fetch(`http://localhost:3001/prontuarios/${id}`, {
+        method: 'DELETE'
+      }).then(() => location.reload());
+    }
+
+    function editar(id, descricao, observacoes, data) {
+      const novaDescricao = prompt('Nova descrição:', descricao);
+      const novasObs = prompt('Novas observações:', observacoes);
+      const novaData = prompt('Nova data (YYYY-MM-DD):', data);
+
+      if (novaDescricao && novasObs && novaData) {
+        fetch(`http://localhost:3001/prontuarios/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            descricao: novaDescricao,
+            observacoes: novasObs,
+            data: novaData
+          })
+        }).then(() => location.reload());
+      }
+    }
+  </script>
+</body>
+</html>

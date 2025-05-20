@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Evolução do Paciente</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html">Pacientes</a> |
+      <a href="agendamentos.html">Consultas</a> |
+      <a href="pagamentos.html">Pagamentos</a> |
+      <a href="prontuarios.html">Prontuários</a> |
+      <a href="evolucao.html">Evolução</a> |
+      <a href="faltas.html">Faltas</a>
+    </nav>
+
+    <h1>Registrar Evolução do Paciente</h1>
+
+    <form id="evolucaoForm">
+      <label for="paciente_id">Nome do Paciente:</label>
+      <select id="paciente_id" required>
+        <option value="">Selecione um paciente</option>
+      </select>
+
+      <label for="data">Data da Evolução:</label>
+      <input type="date" id="data" required />
+
+      <label for="descricao">Descrição:</label>
+      <textarea id="descricao" rows="5" required></textarea>
+
+      <label for="nivel_avanco">Nível de Avanço (1 a 10):</label>
+      <input type="number" id="nivel_avanco" min="1" max="10" required />
+
+      <button type="submit">Salvar Evolução</button>
+    </form>
+
+    <div id="mensagem" class="mensagem"></div>
+
+    <ul id="lista-evolucoes"></ul>
+  </div>
+
+  <script>
+    // Enviar nova evolução
+    document.getElementById('evolucaoForm').addEventListener('submit', function (e) {
+      e.preventDefault();
+
+      const paciente_id = document.getElementById('paciente_id').value;
+      const data = document.getElementById('data').value;
+      const descricao = document.getElementById('descricao').value;
+      const nivel_avanco = document.getElementById('nivel_avanco').value;
+
+      fetch('http://localhost:3001/evolucoes', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ paciente_id, data, descricao, nivel_avanco })
+      })
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('mensagem').textContent = data.message || 'Evolução registrada com sucesso!';
+        document.getElementById('evolucaoForm').reset();
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('mensagem').textContent = 'Erro ao registrar a evolução.';
+      });
+    });
+
+    // Carregar lista de evoluções se tiver ID
+    const urlParams = new URLSearchParams(window.location.search);
+    const paciente_id = urlParams.get('paciente_id');
+
+    if (paciente_id) {
+      fetch(`http://localhost:3001/evolucoes/${paciente_id}`)
+        .then(res => res.json())
+        .then(evolucoes => {
+          const lista = document.getElementById('lista-evolucoes');
+          evolucoes.forEach(e => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <strong>${e.data}</strong> - ${e.descricao} | Nível: ${e.nivel_avanco}<br/>
+              <button onclick="deletar(${e.id})">Deletar</button>
+              <button onclick="editar(${e.id}, '${e.descricao}', ${e.nivel_avanco}, '${e.data}')">Editar</button>
+            `;
+            lista.appendChild(li);
+          });
+        });
+    }
+
+    function deletar(id) {
+      fetch(`http://localhost:3001/evolucoes/${id}`, {
+        method: 'DELETE'
+      }).then(() => location.reload());
+    }
+
+    function editar(id, descricao, nivel, data) {
+      const novaDescricao = prompt('Nova descrição:', descricao);
+      const novoNivel = prompt('Novo nível de avanço:', nivel);
+      const novaData = prompt('Nova data (YYYY-MM-DD):', data);
+
+      if (novaDescricao && novoNivel && novaData) {
+        fetch(`http://localhost:3001/evolucoes/${id}`, {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            descricao: novaDescricao,
+            nivel_avanco: parseInt(novoNivel),
+            data: novaData
+          })
+        }).then(() => location.reload());
+      }
+    }
+
+    // 🔄 Preencher o select com os nomes dos pacientes cadastrados
+    window.addEventListener('DOMContentLoaded', () => {
+      fetch('http://localhost:3001/pacientes')
+        .then(res => res.json())
+        .then(pacientes => {
+          const select = document.getElementById('paciente_id');
+          pacientes.forEach(paciente => {
+            const option = document.createElement('option');
+            option.value = paciente.id;
+            option.textContent = paciente.nome;
+            select.appendChild(option);
+          });
+        })
+        .catch(err => {
+          console.error('Erro ao carregar pacientes:', err);
+        });
+    });
+  </script>
+</body>
+</html>

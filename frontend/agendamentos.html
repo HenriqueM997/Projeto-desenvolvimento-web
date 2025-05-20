@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Agendamentos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html">Pacientes</a> |
+      <a href="agendamentos.html">Consultas</a> |
+      <a href="pagamentos.html">Pagamentos</a> |
+      <a href="prontuarios.html">Prontuários</a> |
+      <a href="evolucao.html">Evolução</a> |
+      <a href="faltas.html">Faltas</a>
+    </nav>
+
+    <h1>Agendar Consulta</h1>
+
+    <form id="formAgendamento">
+      <input type="text" id="nomePaciente" placeholder="Nome do paciente" required />
+      <input type="date" id="dataConsulta" required />
+      <input type="time" id="horaConsulta" required />
+      <select id="statusConsulta">
+        <option value="Agendada">Agendada</option>
+        <option value="Realizada">Realizada</option>
+        <option value="Cancelada">Cancelada</option>
+      </select>
+      <button type="submit">Agendar</button>
+    </form>
+
+    <h2>Consultas Agendadas</h2>
+    <table id="tabelaConsultas">
+      <thead>
+        <tr>
+          <th>Paciente</th>
+          <th>Data</th>
+          <th>Hora</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody>
+
+      </tbody>
+    </table>
+  </div>
+
+ <script>
+  const form = document.getElementById('formAgendamento');
+  const tabela = document.getElementById('tabelaConsultas').querySelector('tbody');
+
+  let consultas = JSON.parse(localStorage.getItem('consultas') || '[]');
+
+  function carregarConsultas() {
+    tabela.innerHTML = '';
+    consultas.forEach(c => {
+      const linha = document.createElement('tr');
+      linha.innerHTML = `
+        <td>${c.nome}</td>
+        <td>${c.data}</td>
+        <td>${c.hora}</td>
+        <td>${c.status}</td>
+      `;
+      tabela.appendChild(linha);
+    });
+  }
+
+  function ordenarConsultas() {
+    consultas.sort((a, b) => {
+      const dataA = new Date(a.data + 'T' + a.hora);
+      const dataB = new Date(b.data + 'T' + b.hora);
+      return dataA - dataB; 
+    });
+    carregarConsultas();
+  }
+
+  function limparConsultas() {
+    if (confirm("Tem certeza que deseja apagar todos os agendamentos?")) {
+      localStorage.removeItem('consultas');
+      consultas = [];
+      carregarConsultas();
+    }
+  }
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    const nome = document.getElementById('nomePaciente').value;
+    const data = document.getElementById('dataConsulta').value;
+    const hora = document.getElementById('horaConsulta').value;
+    const status = document.getElementById('statusConsulta').value;
+
+    consultas.push({ nome, data, hora, status });
+    localStorage.setItem('consultas', JSON.stringify(consultas));
+    form.reset();
+    carregarConsultas();
+  });
+
+  window.addEventListener('load', carregarConsultas);
+
+    fetch('/pacientes/ordenados')
+      .then(response => response.json())
+      .then(pacientes => {
+        const lista = document.getElementById('lista-pacientes');
+        pacientes.forEach(p => {
+          const li = document.createElement('li');
+          li.innerHTML = `
+            <strong>${p.nome}</strong> - ${p.telefone}
+            <a href="prontuarios.html?paciente_id=${p.id}">Ver Prontuários</a> |
+            <a href="evolucoes.html?paciente_id=${p.id}">Ver Evoluções</a>
+          `;
+          lista.appendChild(li);
+        });
+      });
+</script>
+</body>
+</html>

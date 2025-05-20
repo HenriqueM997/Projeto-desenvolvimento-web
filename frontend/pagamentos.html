@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pagamentos</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <nav>
+      <a href="index.html">Pacientes</a> |
+      <a href="agendamentos.html">Consultas</a> |
+      <a href="pagamentos.html">Pagamentos</a> |
+      <a href="prontuarios.html">Prontuários</a> |
+      <a href="evolucao.html">Evolução</a> |
+      <a href="faltas.html">Faltas</a>
+    </nav>
+
+    <h1>Registro de Pagamento</h1>
+
+    <form id="pagamento-form">
+      <label for="paciente_id">Nome do Paciente</label>
+      <select id="paciente_id" required>
+        <option value="">Selecione um paciente</option>
+        <option value="1">João Silva</option>
+        <option value="2">Maria Souza</option>
+        <option value="3">Carlos Oliveira</option>
+      </select>
+
+      <label for="valor">Valor (R$)</label>
+      <input type="number" id="valor" step="0.01" required />
+
+      <label for="data_pagamento">Data do Pagamento</label>
+      <input type="date" id="data_pagamento" required />
+
+      <label for="forma_pagamento">Forma de Pagamento</label>
+      <input type="text" id="forma_pagamento" placeholder="Ex: Pix, Cartão, Dinheiro" required />
+
+      <label for="status">Status</label>
+      <select id="status" required>
+        <option value="Pago">Pago</option>
+        <option value="Pendente">Pendente</option>
+      </select>
+
+      <button type="submit">Registrar</button>
+    </form>
+
+    <p id="mensagem"></p>
+  </div>
+
+  <script>
+    const form = document.getElementById('pagamento-form');
+    const mensagem = document.getElementById('mensagem');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        paciente_id: document.getElementById('paciente_id').value,
+        valor: document.getElementById('valor').value,
+        data_pagamento: document.getElementById('data_pagamento').value,
+        forma_pagamento: document.getElementById('forma_pagamento').value,
+        status: document.getElementById('status').value,
+      };
+
+      try {
+        const response = await fetch('http://localhost:3001/pagamentos', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(data)
+        });
+
+        const result = await response.json();
+        mensagem.textContent = result.message || 'Pagamento registrado com sucesso!';
+        mensagem.style.color = 'green';
+        form.reset();
+      } catch (err) {
+        console.error(err);
+        mensagem.textContent = 'Erro ao registrar pagamento.';
+        mensagem.style.color = 'red';
+      }
+    });
+  </script>
+</body>
+</html>

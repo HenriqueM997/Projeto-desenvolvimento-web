@@ -1,0 +1,123 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 600px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+nav {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+nav a {
+    text-decoration: none;
+    color: #007BFF;
+    margin: 0 10px;
+    font-weight: bold;
+}
+
+nav a:hover {
+    text-decoration: underline;
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+}
+
+form input,
+form select,
+form button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+}
+
+form button {
+    background-color: #28a745;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+form button:hover {
+    background-color: #218838;
+}
+
+textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 12px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    resize: vertical;
+    font-size: 16px;
+    box-sizing: border-box;
+}
+
+.form-group {
+    margin-bottom: 24px;
+}
+form textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    resize: vertical; 
+}
+
+
+#tabela-pacientes {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
+}
+
+#tabela-pacientes th {
+    background-color: #28a745;
+    color: white;
+    padding: 12px;
+    text-align: left;
+    border-radius: 6px 6px 0 0;
+}
+
+#tabela-pacientes td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+}
+
+#tabela-pacientes tr:last-child td {
+    border-bottom: none;
+}
+
+#tabela-pacientes tr:hover {
+    background-color: #f0f4f8;
+}
+
+#tabela-pacientes th, 
+#tabela-pacientes td {
+    font-size: 16px;
+    line-height: 1.5;
+}
+
+.tabela-container {
+    margin-bottom: 30px;
+}

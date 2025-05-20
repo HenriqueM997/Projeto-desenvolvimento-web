@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Gerenciar Consultas</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="gerenciar-consultas-container">
+    <h2>Gerenciar Consultas</h2>
+
+
+    <table class="tabela-consultas" id="tabela">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>Data</th>
+          <th>Hora</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    const baseUrl = 'http://localhost:3001';
+
+    async function carregarConsultas() {
+      const res = await fetch(`${baseUrl}/consultas`);
+      const consultas = await res.json();
+      const tbody = document.querySelector('#tabela tbody');
+      tbody.innerHTML = '';
+
+      consultas.forEach(c => {
+        const row = document.createElement('tr');
+
+        row.innerHTML = `
+          <td><input value="${c.nome_paciente}" data-id="${c.id}" data-field="nome_paciente" /></td>
+          <td><input type="date" value="${c.data}" data-id="${c.id}" data-field="data" /></td>
+          <td><input type="time" value="${c.hora}" data-id="${c.id}" data-field="hora" /></td>
+          <td>
+            <select data-id="${c.id}" data-field="status">
+              <option ${c.status === 'Agendada' ? 'selected' : ''}>Agendada</option>
+              <option ${c.status === 'Cancelada' ? 'selected' : ''}>Cancelada</option>
+              <option ${c.status === 'Faltou' ? 'selected' : ''}>Faltou</option>
+            </select>
+          </td>
+          <td class="botao-acao">
+            <button class="botao-editar" onclick="salvar(${c.id})">Salvar</button>
+            <button class="botao-excluir" onclick="excluir(${c.id})">Excluir</button>
+          </td>
+        `;
+
+        tbody.appendChild(row);
+      });
+    }
+
+    async function salvar(id) {
+      const campos = document.querySelectorAll(`[data-id="${id}"]`);
+      const dados = {};
+      campos.forEach(c => dados[c.dataset.field] = c.value);
+      await fetch(`${baseUrl}/consultas/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(dados)
+      });
+      alert('Consulta atualizada!');
+      carregarConsultas();
+    }
+
+    async function excluir(id) {
+      if (confirm('Tem certeza que deseja excluir?')) {
+        await fetch(`${baseUrl}/consultas/${id}`, { method: 'DELETE' });
+        alert('Consulta excluída!');
+        carregarConsultas();
+      }
+    }
+
+    carregarConsultas();
+  </script>
+</body>
+</html>

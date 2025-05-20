@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <title>Agenda Psicólogo</title>
+     <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+      <div class="container">
+     <nav>
+      <a href="index.html">Pacientes</a> |
+      <a href="agendamentos.html">Consultas</a> |
+      <a href="pagamentos.html">Pagamentos</a> |
+      <a href="prontuarios.html">Prontuários</a> |
+      <a href="evolucao.html">Evolução</a> |
+      <a href="faltas.html">Faltas</a>
+    </nav>
+    <h1>Cadastro de Paciente</h1>
+    <link rel="stylesheet" href="style.css">
+    <form id="formPaciente">
+        <input type="text" placeholder="Nome" id="nome" required><br>
+        <input type="email" placeholder="Email" id="email"><br>
+        <input type="text" placeholder="Telefone" id="telefone"><br>
+        <button type="submit">Salvar</button> 
+    </form>
+
+<script>
+document.getElementById('formPaciente').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const nome = document.getElementById('nome').value;
+    const email = document.getElementById('email').value;
+    const telefone = document.getElementById('telefone').value;
+
+    try {
+        const resposta = await fetch("http://localhost:3001/pacientes", {
+            method: 'POST',
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ nome, email, telefone })
+        });
+
+        const resultado = await resposta.json();
+
+        alert(resultado.message || "Paciente cadastrado com sucesso!");
+    } catch (erro) {
+        console.error("Erro ao salvar paciente:", erro);
+        alert("Erro ao salvar paciente. Verifique o console.");
+    }
+});
+</script>
+
+</body>
+</html>
